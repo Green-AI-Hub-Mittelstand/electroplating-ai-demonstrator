@@ -27,16 +27,18 @@ services:
       - ./iot-telemetry/influxdb-provisioning:/docker-entrypoint-initdb.d
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=user
-      - DOCKER_INFLUXDB_INIT_PASSWORD=password1234
-      - DOCKER_INFLUXDB_INIT_ORG=some_org
-      - DOCKER_INFLUXDB_INIT_BUCKET=sensordata
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=4eYvsu8wZCJ6tKuE2sxvFHkvYFwSMVK0011hEEiojvejzpSaij86vYQomN_12au6eK-2MZ6Knr-Sax201y70w==
+      - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
   
   telegraf:
     image: telegraf
     container_name: telegraf
     restart: always
+    environment:
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
     volumes:
       - ./iot-telemetry/telegraf.conf:/etc/telegraf/telegraf.conf:ro
     depends_on:
@@ -44,13 +46,15 @@ services:
       - influxdb
     networks:
       - iot
-  
+
   grafana:
     image: grafana/grafana
     container_name: grafana
     restart: always
     ports:
       - "3000:3000"
+    environment:
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
     networks:
       - iot
     volumes:
@@ -75,7 +79,7 @@ services:
     build:
       context: anomaly-detection
     environment:
-      - INFLUXDB_TOKEN=4eYvsu8wZCJ6tKuE2sxvFHkvYFwSMVK0011hEEiojvejzpSaij86vYQomN_12au6eK-2MZ6Knr-Sax201y70w==
+      - INFLUXDB_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
       - MQTT_ADDRESS=mosquitto
       - INFLUXDB_ADDRESS=influxdb
       - BUCKET=predictions

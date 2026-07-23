@@ -72,12 +72,14 @@ The demonstrator requires Docker and Docker Compose to be installed.
 
 ### Starting the applications
 
+Copy `.env.example` to `.env` and fill in your own InfluxDB credentials/token (`.env` is git-ignored and read automatically by Docker Compose).
+
 To start the applications, execute `docker compose up -d`. Docker will automatically build the electroplating bath simulator and the anomaly agent as well as pull any other necessary software from Docker Hub. It will then set up all applications which are then ready to use. If you are interested in customizing the applications' setup please consult the `docker-compose.yaml` file.
 
 The applications will be available as follows (if ports were not change in `docker-compose.yaml`):
 - Bath Simulation: http://localhost:5010
 - Grafana Dashboard: http://localhost:3000 (initial login: *user*: admin *password*: admin)
-- InfluxDB UI: http://localhost:8086 (login: *user*: user *password*: password1234)
+- InfluxDB UI: http://localhost:8086 (login credentials are set in your `.env` file, see `.env.example`)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
